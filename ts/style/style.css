@@ -31,14 +31,9 @@ label{
 display: flex;
 justify-content: center;
 align-items: center;
-flex-direction: row;
+flex-direction: column;
 }
-#firstButton{
-    margin-top: 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    background-color: #fff;
-}
+
 #textInput:hover,#checkBoxInput:hover{
 background-color: #bbb;
 transition: 2s;
@@ -50,4 +45,32 @@ cursor: pointer;
 }
 .ErrorPh{
     color:#f00;
+}
+.buttons{
+    margin-top: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: #fff;
+    padding: 10px;
+}
+.buttons:hover{
+    transition: 1s;
+    background-color: #babafe;
+    color:#fff;
+}
+.labelContainer{
+    margin: 0 10px 0 10px;
+}
+.buttonContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+    gap:20px;
+}
+.out{
+    margin-top: 50px;
+    color: #fff;
+    padding: 10px;
+    border: 1px solid #fff;
 }

@@ -1,35 +1,53 @@
 const { STATUS_CODE } = require('../configuration');
-const client = require('../dataBases/dataBases');
+const { userValidate } = require('../utils/users.validate');
+
+const userArray = [];
 
 module.exports = {
-
-    getNamesByInterval: async (req, res) => {
+    getLastUser: (req, res) => {
+        try {
+            const result = userArray.at(-1);
+            res.status(STATUS_CODE.OK).json(result);
+        } catch (err) {
+            console.error('getLastUser: ', err);
+        }
+    },
+    getNamesByInterval: (req, res) => {
         try {
 
-            const { user_id } = req.query;
+            userArray.forEach((e, index) => {
+                function setTime(iter, index) {
+                    setTimeout(() => {
+                        console.log(iter);
+                    }, 2000 + (2000 * index));
+                }
+                setTime(e, index);
+            });
 
-
-            const setPromise = (item) => setTimeout(() => {
-                console.log(item)
-                return item
-            }, 4000);
-            const result = await client.query(`SELECT first_name, last_name FROM  users`);
-            user_id.forEach(item => setPromise(item));
-            if (!result.rowCount) return res.status(STATUS_CODE.NOT_FOUND).json({ message: "NOT FOUND User" });
-
-            res.status(STATUS_CODE.OK).json(result.rows);
+            res.status(STATUS_CODE.OK).json({ message: "work" });
         } catch (err) {
             console.error('getNamesByInterval: ', err);
         }
     },
-    getInterval: (req, res) => {
+    postNewUser: (req, res) => {
         try {
-            const { user_id } = req.query;
-            console.log(user_id);
-            const setPromise = (item) => setTimeout(this.getNamesByInterval(item, res), 2000)
-            user_id.forEach(item => setPromise(item));
+            const { body } = req;
+
+            if (Object.keys(body).length === 0 || Object.values(body)[0] === '') {
+
+                res.status(STATUS_CODE.BAD_REQUEST).json({ message: "Body is empty" });
+                return;
+            }
+            const validate = userValidate.validate(body);
+            if (Object.values(validate).length === 0) {
+                res.status(STATUS_CODE.BAD_REQUEST).json({ message: "not correct value" })
+            }
+            userArray.push(body);
+
+            res.status(STATUS_CODE.CREATED).json({ message: "User was created" });
         } catch (err) {
-            console.error('getInterval: ', err);
+            console.error('postNewUser: ', err);
         }
-    },
+    }
 }
+

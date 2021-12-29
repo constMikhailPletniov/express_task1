@@ -1,48 +1,50 @@
 import domElements from './domElements/domElements';
+import axios from 'axios';
+import SERVER from './configuration';
+import ENDPOINTS from './endpoints';
+//import { IUserName } from './interfaces/interfaces';
 import './style/style.css';
+
+require("babel-core/register");
+require("babel-polyfill");
 
 domElements.buttonIdFirstButton.addEventListener('click', getInputValue);
 domElements.buttonIdGetUsersButton.addEventListener('click', getLastUser);
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let count = 0;
-const usersArray: Array<string> = [];
 
-function getInputValue(): undefined {
-    if (!validateInput((<HTMLInputElement>domElements.inputIdTextInput).value)) return;
+async function getInputValue(): Promise<void> {
+    try {
+        console.log((<HTMLInputElement>domElements.inputIdTextInput).value);
+        count++;
+        removeValueFromInput(domElements.inputIdTextInput);
+        console.log((<HTMLInputElement>domElements.inputIdTextInput).value);
+        const { data: message } = await axios.post(`${SERVER.URL}${ENDPOINTS.USERS}`, {
+            "userName": (<HTMLInputElement>domElements.inputIdTextInput).value
+        }, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        console.log(message);
 
-    count++;
-    usersArray.push((<HTMLInputElement>domElements.inputIdTextInput).value);
-    pushValueToStorage((<HTMLInputElement>domElements.inputIdTextInput).value, count);
-    removeValueFromInput(domElements.inputIdTextInput);
-    console.log(usersArray);
-    // getLastUser(usersArray);
+    } catch (err) {
+        console.error('getInputValue: ', err);
+    }
 }
 
-function getLastUser() {
-    console.log(usersArray);
-}
-
-function pushValueToStorage(value: string, count: number): void {
-    localStorage.setItem(`id-${count}`, value);
+async function getLastUser(): Promise<void> {
+    try {
+        const { data: { userName } } = await axios.get(`${SERVER.URL}${ENDPOINTS.USERS}${ENDPOINTS.LAST_USER}`);
+        domElements.divClassOut.textContent = userName;
+    } catch (err) {
+        console.error('getLastUser: ', err);
+    }
 }
 
 function removeValueFromInput(element: HTMLInputElement): void {
     element.value = '';
 }
 
-function validateInput(text: string): unknown {
-    if (!text.match(/[A-Z][a-z]*/g)) {
-        setError();
-        return;
-    }
-    else if (text === '') {
-        setError();
-        return;
-    }
-
-}
-
-function setError(): void {
-    domElements.divClassErorrContainer.classList.toggle('hidden');
-}
 

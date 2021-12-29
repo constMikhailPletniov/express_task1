@@ -1,3 +1,3 @@
 export default {
-    SERVER: 'http://localhost:5000/users'
+    URL: 'http://localhost:5000',
 }
